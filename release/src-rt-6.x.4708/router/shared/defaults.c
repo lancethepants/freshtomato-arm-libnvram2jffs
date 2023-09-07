@@ -103,6 +103,11 @@ struct nvram_tuple upnp_defaults[] = {
 struct nvram_tuple router_defaults[] = {
 	{ "restore_defaults",		"0"				, 0 },	/* Set to 0 to not restore defaults on boot */
 
+#ifdef TCONFIG_NVRAM2JFFS
+	{ "nvram2jffs_enable",		"0"				, 0 },	/* Set to 1 to store values matching nvram2jffs_regex to jffs */
+	{ "nvram2jffs_regex",		"^vpn|^tinc"			, 0 },
+#endif
+
 	/* LAN H/W parameters */
 	{ "lan_hwnames",		""				, 0 },	/* LAN driver names (e.g. et0) */
 	{ "lan_hwaddr",			""				, 0 },	/* LAN interface MAC address */

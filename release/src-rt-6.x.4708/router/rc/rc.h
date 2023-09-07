@@ -644,4 +644,8 @@ extern void stop_ftpd(void);
 extern void run_ftpd_firewall_script(void);
 #endif
 
+#ifdef TCONFIG_NVRAM2JFFS
+exter void nvram_relocate_variables(void);
+#endif
+
 #endif /* __RC_H__ */

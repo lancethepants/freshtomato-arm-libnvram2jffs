@@ -18,7 +18,13 @@
 
 <script>
 
+/* NVRAM2JFFS-BEGIN */
+//	<% nvram("jffs2_on,jffs2_exec,t_fix1,nvram2jffs_enable,nvram2jffs_regex"); %>
+/* NVRAM2JFFS-END */
+
+/* NVRAM2JFFS-REMOVE-BEGIN */
 //	<% nvram("jffs2_on,jffs2_exec,t_fix1"); %>
+/* NVRAM2JFFS-REMOVE-END */
 
 /* JFFS2-BEGIN */
 //	<% statfs("/jffs", "jffs2"); %>
@@ -33,6 +39,10 @@ function verifyFields(focused, quiet) {
 	var b = !E('_f_jffs2_on').checked;
 	E('format').disabled = b;
 	E('_jffs2_exec').disabled = b;
+/* NVRAM2JFFS-BEGIN */
+	E('_f_nvram2jffs_enable').disabled = b;
+	E('_nvram2jffs_regex').disabled = b;
+/* NVRAM2JFFS-END */
 
 	return 1;
 }
@@ -76,6 +86,9 @@ function save(format) {
 		fom._commit.value = 1;
 		fom._nextwait.value = on ? 15 : 3;
 	}
+/* NVRAM2JFFS-BEGIN */
+	fom.nvram2jffs_enable.value = E('_f_nvram2jffs_enable').checked ? 1 : 0;
+/* NVRAM2JFFS-END */
 	form.submit(fom, 1);
 
 	if (format) {
@@ -109,6 +122,9 @@ function submit_complete() {
 <input type="hidden" name="_service" value="jffs2-restart">
 <input type="hidden" name="_commit" value="1">
 <input type="hidden" name="jffs2_on">
+/* NVRAM2JFFS-BEGIN */
+<input type="hidden" name="nvram2jffs_enable">
+/* NVRAM2JFFS-END */
 <input type="hidden" name="jffs2_format" value="0">
 
 <!-- / / / -->
@@ -132,6 +148,18 @@ function submit_complete() {
 		]);
 	</script>
 </div>
+
+/* NVRAM2JFFS-BEGIN */
+<div class="section-title">NVRAM2JFFS</div>
+<div class="section">
+	<script>
+		createFieldTable('', [
+			{ title: 'Enable nvram2jffs', name: 'f_nvram2jffs_enable', type: 'checkbox', value: (nvram.nvram2jffs_enable == 1) },
+			{ title: 'Regex to match', name: 'nvram2jffs_regex', type: 'text', maxlen: 64, size: 34, value: nvram.nvram2jffs_regex },
+		]);
+	</script>
+</div>
+/* NVRAM2JFFS-END */
 
 <!-- / / / -->
 

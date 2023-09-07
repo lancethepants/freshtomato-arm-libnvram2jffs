@@ -158,6 +158,11 @@ void start_jffs2(void)
 
 	notice_set("jffs", format ? "Formatted" : "Loaded");
 
+#ifdef TCONFIG_NVRAM2JFFS
+	system("mkdir -p /jffs/.nvram");
+	nvram_relocate_variables();
+#endif
+
 	if ((p = nvram_safe_get("jffs2_exec")) && (*p)) {
 		chdir("/jffs");
 		system(p);
@@ -179,6 +184,9 @@ void stop_jffs2(void)
 #endif
 	) {
 		/* is mounted */
+#ifdef TCONFIG_NVRAM2JFFS
+		nvram_relocate_variables();
+#endif
 		run_userfile("/jffs", ".autostop", "/jffs", 5);
 		run_nvscript("script_autostop", "/jffs", 5);
 	}

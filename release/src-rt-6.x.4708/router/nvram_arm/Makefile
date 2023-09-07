@@ -20,6 +20,9 @@
 
 include ../common.mak
 
+ifeq ($(TCONFIG_NVRAM2JFFS),y)
+CFLAGS	+= -DTCONFIG_NVRAM2JFFS
+endif
 CFLAGS	+= -I. -I$(SRCBASE)/include -Wall -fPIC
 #CFLAGS	+= -g -DDEBUG
 CFLAGS	+= -s
@@ -50,8 +53,12 @@ install: all
 clean:
 	rm -f *.o *.a *.so nvram
 
-libnvram.so: nvram_linux.o
+libnvram.so: nvram_linux.o $(if $(TCONFIG_NVRAM2JFFS),wrapper.o,)
+ifeq ($(TCONFIG_NVRAM2JFFS),y)
+	$(CC) -o $@ -Wl,--whole-archive $(TOP)/libnvram2jffs/libnvram2jffs.a -Wl,--no-whole-archive -shared $^
+else
 	$(LD) -shared -o $@ $^
+endif
 
 nvram: main.o libnvram.so
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS) -lnvram

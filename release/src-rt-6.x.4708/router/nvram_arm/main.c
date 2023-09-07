@@ -28,6 +28,11 @@
 #define PROFILE_HEADER		"HDR1"
 #define PROFILE_HEADER_NEW	"HDR2"
 
+#ifdef TCONFIG_NVRAM2JFFS
+#define MAX_NVRAM_SPACE_JFFS	1048576
+extern void nvram_relocate_variables();
+#endif
+
 unsigned char get_rand()
 {
 	unsigned char buf[1];
@@ -236,7 +241,11 @@ usage(void)
 {
 	fprintf(stderr,
 	        "usage: nvram [get name] [set name=value] "
+#ifdef TCONFIG_NVRAM2JFFS
+	        "[unset name] [show] [commit] [erase] [relocate] "
+#else
 	        "[unset name] [show] [commit] [erase]"
+#endif
                 "[save filetosave.cfg] [restore filetorestore.cfg] ...\n");
 	exit(0);
 }
@@ -245,7 +254,12 @@ usage(void)
 int
 main(int argc, char **argv)
 {
-	char *name, *value, buf[MAX_NVRAM_SPACE];
+	char *name, *value;
+#ifdef TCONFIG_NVRAM2JFFS
+	char buf[MAX_NVRAM_SPACE + MAX_NVRAM_SPACE_JFFS + 1];
+#else
+	char buf[MAX_NVRAM_SPACE];
+#endif
 	int size;
 
 	/* Skip program name */
@@ -293,6 +307,10 @@ main(int argc, char **argv)
 			if (**argv != 'd')
 				fprintf(stderr, "size: %d bytes (%d left)\n",
 				        size, MAX_NVRAM_SPACE - size);
+#ifdef TCONFIG_NVRAM2JFFS
+		} else if (!strcmp(*argv, "relocate")) {
+			nvram_relocate_variables();
+#endif
 		} else
 			usage();
 	}

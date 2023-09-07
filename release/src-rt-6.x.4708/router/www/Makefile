@@ -454,6 +454,13 @@ ifneq ($(TCONFIG_WIREGUARD),y)
 	sed -i $(INSTALLDIR)/www/tomato.js -e "/WIREGUARD-BEGIN/,/WIREGUARD-END/d"
 endif
 
+# Only include nvram2jffs if it is compiled in
+ifneq ($(TCONFIG_NVRAM2JFFS),y)
+	sed -i $(INSTALLDIR)/www/admin-jffs2.asp -e "/NVRAM2JFFS-BEGIN/,/NVRAM2JFFS-END/d"
+else
+	sed -i $(INSTALLDIR)/www/admin-jffs2.asp -e "/NVRAM2JFFS-REMOVE-BEGIN/,/NVRAM2JFFS-REMOVE-END/d"
+endif
+
 # clean up
 	cd $(INSTALLDIR)/www && \
 	for F in $(wildcard *.asp *.js *.jsx *.jsz *.html); do \

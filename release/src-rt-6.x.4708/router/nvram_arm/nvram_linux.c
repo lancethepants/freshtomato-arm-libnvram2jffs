@@ -67,7 +67,11 @@ err:
 }
 
 char *
+#ifdef TCONFIG_NVRAM2JFFS
+nvram_get_traditional(const char *name)
+#else
 nvram_get(const char *name)
+#endif
 {
 	size_t count = strlen(name) + 1;
 	char tmp[100], *value;
@@ -101,7 +105,11 @@ nvram_get(const char *name)
 }
 
 int
+#ifdef TCONFIG_NVRAM2JFFS
+nvram_getall_traditional(char *buf, int count)
+#else
 nvram_getall(char *buf, int count)
+#endif
 {
 	int ret;
 
@@ -193,13 +201,21 @@ _nvram_set(const char *name, const char *value)
 }
 
 int
+#ifdef TCONFIG_NVRAM2JFFS
+nvram_set_traditional(const char *name, const char *value)
+#else
 nvram_set(const char *name, const char *value)
+#endif
 {
 	return _nvram_set(name, value);
 }
 
 int
+#ifdef TCONFIG_NVRAM2JFFS
+nvram_unset_traditional(const char *name)
+#else
 nvram_unset(const char *name)
+#endif
 {
 	return _nvram_set(name, NULL);
 }

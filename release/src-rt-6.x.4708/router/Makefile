@@ -231,6 +231,7 @@ endif
 
 obj-y += busybox
 obj-y += shared
+obj-$(TCONFIG_NVRAM2JFFS) += libnvram2jffs
 obj-y += nvram$(BCMEX)
 obj-$(TCONFIG_BCMARM) += eapd$(BCMEX)/linux
 ifneq ($(TCONFIG_BCMARM),y)
@@ -1645,7 +1646,7 @@ dhcpv6/stamp-h1:
 		CFLAGS="-Os -Wall $(EXTRACFLAGS) -D_GNU_SOURCE -ffunction-sections -fdata-sections -I$(SRCBASE)/include -I$(TOP)/shared -DTOMATO \
 			$(if $(TCONFIG_BCMARM),-DHAVE_CLOEXEC,) \
 			$(if $(or $(TCONFIG_BCMARM),$(TCONFIG_BLINK)),-DNEED_DEBUG,)" \
-		LDFLAGS="-ffunction-sections -fdata-sections -Wl,--gc-sections -L$(TOP)/nvram$(BCMEX) -lnvram $(if $(TCONFIG_BCMARM),,-L$(TOP)/shared -lshared)" \
+		LDFLAGS="-ffunction-sections -fdata-sections -Wl,--gc-sections -L$(TOP)/nvram$(BCMEX) -lnvram -L$(TOP)/shared -lshared $(if $(TCONFIG_BCMARM),-lgcc_s,)" \
 		ac_cv_func_setpgrp_void=yes \
 		$(CONFIGURE) --prefix= --with-localdbdir=/var
 	@$(MAKE) -C dhcpv6 clean
@@ -4046,6 +4047,19 @@ irqbalance-clean:
 	@rm -f irqbalance/stamp-h1
 	$(call unpatch_files,irqbalance)
 
+libnvram2jffs/stamp-h1:
+	@$(SEP)
+	$(call patch_files,libnvram2jffs)
+
+libnvram2jffs: libnvram2jffs/stamp-h1
+	-@$(MAKE) -C libnvram2jffs
+
+libnvram2jffs-clean:
+	-@$(MAKE) -C libnvram2jffs clean
+	$(call unpatch_files,libnvram2jffs)
+
+libnvram2jffs-install:
+	@true
 
 #
 # Generic rules

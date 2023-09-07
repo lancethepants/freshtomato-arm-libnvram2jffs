@@ -1081,6 +1081,11 @@ static const nvset_t nvset_list[] = {
 	{ "jffs2_format",		V_01				},
 	{ "jffs2_auto_unmount",		V_01				},	/* automatically unmount JFFS2 during FW upgrade */
 
+#ifdef TCONFIG_NVRAM2JFFS
+	{ "nvram2jffs_enable",		V_01				},
+	{ "nvram2jffs_regex",		V_LENGTH(0, 64)			},
+#endif
+
 #ifdef TCONFIG_SDHC
 /* admin-sdhc */
 	{ "mmc_on",			V_01				},
