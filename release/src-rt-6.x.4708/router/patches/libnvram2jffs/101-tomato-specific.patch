@@ -1,0 +1,842 @@
+diff -Naur libnvram2jffs.orig/alias.c libnvram2jffs/alias.c
+--- libnvram2jffs.orig/alias.c	2023-09-07 13:35:46.608307694 -0600
++++ libnvram2jffs/alias.c	2023-09-07 13:35:02.648278773 -0600
+@@ -11,17 +11,17 @@
+     return E_FAILURE;
+ }
+ 
+-int nvram_load(void) __attribute__ ((alias ("nvram_init")));
+-int nvram_loaddefault(void) __attribute__ ((alias ("nvram_set_default")));
+-char *_nvram_get(const char *key) __attribute__ ((alias ("nvram_get")));
+-int nvram_get_state(const char *key) __attribute__ ((alias ("nvram_get_int")));
+-int nvram_set_state(const char *key, const int val) __attribute__ ((alias ("nvram_set_int")));
+-int nvram_restore_default(void) __attribute__ ((alias ("nvram_reset")));
+-int nvram_upgrade(void* ptr) __attribute__ ((alias ("nvram_commit")));
++int nvram_load_jffs(void) __attribute__ ((alias ("nvram_init_jffs")));
++int nvram_loaddefault_jffs(void) __attribute__ ((alias ("nvram_set_default_jffs")));
++char *_nvram_get_jffs(const char *key) __attribute__ ((alias ("nvram_get_jffs")));
++int nvram_get_state_jffs(const char *key) __attribute__ ((alias ("nvram_get_int_jffs")));
++int nvram_set_state_jffs(const char *key, const int val) __attribute__ ((alias ("nvram_set_int_jffs")));
++int nvram_restore_default_jffs(void) __attribute__ ((alias ("nvram_reset_jffs")));
++int nvram_upgrade_jffs(void* ptr) __attribute__ ((alias ("nvram_commit_jffs")));
+ 
+ /* Atheros/Broadcom NVRAM */
+ 
+-int nvram_get_nvramspace(void) {
++int nvram_get_nvramspace_jffs(void) {
+     return NVRAM_SIZE;
+ }
+ 
+@@ -64,93 +64,93 @@
+     return E_SUCCESS;
+ }
+ 
+-char *nvram_nget(const char *fmt, ...) {
++char *nvram_nget_jffs(const char *fmt, ...) {
+     va_list va;
+ 
+     va_start(va, fmt);
+     vsnprintf(temp, BUFFER_SIZE, fmt, va);
+     va_end(va);
+ 
+-    return nvram_get(temp);
++    return nvram_get_jffs(temp);
+ }
+ 
+-int nvram_nset(const char *val, const char *fmt, ...) {
++int nvram_nset_jffs(const char *val, const char *fmt, ...) {
+     va_list va;
+ 
+     va_start(va, fmt);
+     vsnprintf(temp, BUFFER_SIZE, fmt, va);
+     va_end(va);
+ 
+-    return nvram_set(temp, val);
++    return nvram_set_jffs(temp, val);
+ }
+ 
+-int nvram_nset_int(const int val, const char *fmt, ...) {
++int nvram_nset_int_jffs(const int val, const char *fmt, ...) {
+     va_list va;
+ 
+     va_start(va, fmt);
+     vsnprintf(temp, BUFFER_SIZE, fmt, va);
+     va_end(va);
+ 
+-    return nvram_set_int(temp, val);
++    return nvram_set_int_jffs(temp, val);
+ }
+ 
+-int nvram_nmatch(const char *val, const char *fmt, ...) {
++int nvram_nmatch_jffs(const char *val, const char *fmt, ...) {
+     va_list va;
+ 
+     va_start(va, fmt);
+     vsnprintf(temp, BUFFER_SIZE, fmt, va);
+     va_end(va);
+ 
+-    return nvram_match(temp, val);
++    return nvram_match_jffs(temp, val);
+ }
+ 
+-int get_default_mac() __attribute__ ((alias ("true")));
++int get_default_mac_jffs() __attribute__ ((alias ("true")));
+ 
+ /* D-Link */
+ 
+-char *artblock_get(const char *key) __attribute__ ((alias ("nvram_get")));
+-char *artblock_fast_get(const char *key) __attribute__ ((alias ("nvram_safe_get")));
+-char *artblock_safe_get(const char *key) __attribute__ ((alias ("nvram_safe_get")));
+-int artblock_set(const char *key, const char *val) __attribute__ ((alias ("nvram_set")));
+-int nvram_flag_set(int unk) __attribute__ ((alias ("true")));
+-int nvram_flag_reset(int unk) __attribute__ ((alias ("true")));
++char *artblock_get_jffs(const char *key) __attribute__ ((alias ("nvram_get_jffs")));
++char *artblock_fast_get_jffs(const char *key) __attribute__ ((alias ("nvram_safe_get_jffs")));
++char *artblock_safe_get_jffs(const char *key) __attribute__ ((alias ("nvram_safe_get_jffs")));
++int artblock_set_jffs(const char *key, const char *val) __attribute__ ((alias ("nvram_set_jffs")));
++int nvram_flag_set_jffs(int unk) __attribute__ ((alias ("true")));
++int nvram_flag_reset_jffs(int unk) __attribute__ ((alias ("true")));
+ 
+ /* D-Link ARM */
+-int nvram_master_init() __attribute__ ((alias ("false")));
+-int nvram_slave_init() __attribute__ ((alias ("false")));
++int nvram_master_init_jffs() __attribute__ ((alias ("false")));
++int nvram_slave_init_jffs() __attribute__ ((alias ("false")));
+ 
+ /* Realtek */
+ // These functions expect integer keys, so we convert to string first.
+ // Unfortunately, this implementation is not entirely correct because some
+ // values are integers and others are string, but we treat all as integers.
+-int apmib_init() __attribute__ ((alias ("true")));
+-int apmib_reinit() __attribute__ ((alias ("true")));
++int apmib_init_jffs() __attribute__ ((alias ("true")));
++int apmib_reinit_jffs() __attribute__ ((alias ("true")));
+ // int apmib_hwconf() __attribute__ ((alias ("true")));
+ // int apmib_dsconf() __attribute__ ((alias ("true")));
+ // int apmib_load_hwconf() __attribute__ ((alias ("true")));
+ // int apmib_load_dsconf() __attribute__ ((alias ("true")));
+ // int apmib_load_csconf() __attribute__ ((alias ("true")));
+-int apmib_update(const int key) __attribute__((alias ("true")));
++int apmib_update_jffs(const int key) __attribute__((alias ("true")));
+ 
+-int apmib_get(const int key, void *buf) {
++int apmib_get_jffs(const int key, void *buf) {
+     int res;
+ 
+     snprintf(temp, BUFFER_SIZE, "%d", key);
+-    if ((res = nvram_get_int(temp))) {
++    if ((res = nvram_get_int_jffs(temp))) {
+         (*(int32_t *) buf) = res;
+     }
+ 
+     return res;
+ }
+ 
+-int apmib_set(const int key, void *buf) {
++int apmib_set_jffs(const int key, void *buf) {
+     snprintf(temp, BUFFER_SIZE, "%d", key);
+-    return nvram_set_int(temp, ((int32_t *) buf)[0]);
++    return nvram_set_int_jffs(temp, ((int32_t *) buf)[0]);
+ }
+ 
+ /* Netgear ACOS */
+ 
+-int WAN_ith_CONFIG_GET(char *buf, const char *fmt, ...) {
++int WAN_ith_CONFIG_GET_jffs(char *buf, const char *fmt, ...) {
+     va_list va;
+ 
+     va_start(va, fmt);
+@@ -160,82 +160,82 @@
+     return nvram_get_buf(temp, buf, USER_BUFFER_SIZE);
+ }
+ 
+-int WAN_ith_CONFIG_SET_AS_STR(const char *val, const char *fmt, ...) __attribute__ ((alias ("nvram_nset")));
++int WAN_ith_CONFIG_SET_AS_STR_jffs(const char *val, const char *fmt, ...) __attribute__ ((alias ("nvram_nset_jffs")));
+ 
+-int WAN_ith_CONFIG_SET_AS_INT(const int val, const char *fmt, ...) __attribute__ ((alias ("nvram_nset_int")));
++int WAN_ith_CONFIG_SET_AS_INT_jffs(const int val, const char *fmt, ...) __attribute__ ((alias ("nvram_nset_int_jffs")));
+ 
+-int acos_nvram_init(void) __attribute__ ((alias ("nvram_init")));
+-char *acos_nvram_get(const char *key) __attribute__ ((alias ("nvram_get")));
+-int acos_nvram_read (const char *key, char *buf, size_t sz) __attribute__ ((alias ("nvram_get_buf")));
+-int acos_nvram_set(const char *key, const char *val) __attribute__ ((alias ("nvram_set")));
+-int acos_nvram_loaddefault(void) __attribute__ ((alias ("nvram_set_default")));
+-int acos_nvram_unset(const char *key) __attribute__ ((alias ("nvram_unset")));
+-int acos_nvram_commit(void) __attribute__ ((alias ("nvram_commit")));
+-
+-int acosNvramConfig_init(char *mount) __attribute__ ((alias ("nvram_init")));
+-char *acosNvramConfig_get(const char *key) __attribute__ ((alias ("nvram_get")));
+-int acosNvramConfig_read (const char *key, char *buf, size_t sz) __attribute__ ((alias ("nvram_get_buf")));
+-int acosNvramConfig_set(const char *key, const char *val) __attribute__ ((alias ("nvram_set")));
+-int acosNvramConfig_write(const char *key, const char *val) __attribute__ ((alias ("nvram_set")));
+-int acosNvramConfig_unset(const char *key) __attribute__ ((alias ("nvram_unset")));
+-int acosNvramConfig_match(const char *key, const char *val) __attribute__ ((alias ("nvram_match")));
+-int acosNvramConfig_invmatch(const char *key, const char *val) __attribute__ ((alias ("nvram_invmatch")));
+-int acosNvramConfig_save(void) __attribute__ ((alias ("nvram_commit")));
+-int acosNvramConfig_save_config(void) __attribute__ ((alias ("nvram_commit")));
+-int acosNvramConfig_loadFactoryDefault(const char* key);
++int acos_nvram_init_jffs(void) __attribute__ ((alias ("nvram_init_jffs")));
++char *acos_nvram_get_jffs(const char *key) __attribute__ ((alias ("nvram_get_jffs")));
++int acos_nvram_read_jffs (const char *key, char *buf, size_t sz) __attribute__ ((alias ("nvram_get_buf")));
++int acos_nvram_set_jffs(const char *key, const char *val) __attribute__ ((alias ("nvram_set_jffs")));
++int acos_nvram_loaddefault_jffs(void) __attribute__ ((alias ("nvram_set_default_jffs")));
++int acos_nvram_unset_jffs(const char *key) __attribute__ ((alias ("nvram_unset_jffs")));
++int acos_nvram_commit_jffs(void) __attribute__ ((alias ("nvram_commit_jffs")));
++
++int acosNvramConfig_init_jffs(char *mount) __attribute__ ((alias ("nvram_init_jffs")));
++char *acosNvramConfig_get_jffs(const char *key) __attribute__ ((alias ("nvram_get_jffs")));
++int acosNvramConfig_read_jffs (const char *key, char *buf, size_t sz) __attribute__ ((alias ("nvram_get_buf")));
++int acosNvramConfig_set_jffs(const char *key, const char *val) __attribute__ ((alias ("nvram_set_jffs")));
++int acosNvramConfig_write_jffs(const char *key, const char *val) __attribute__ ((alias ("nvram_set_jffs")));
++int acosNvramConfig_unset_jffs(const char *key) __attribute__ ((alias ("nvram_unset_jffs")));
++int acosNvramConfig_match_jffs(const char *key, const char *val) __attribute__ ((alias ("nvram_match_jffs")));
++int acosNvramConfig_invmatch_jffs(const char *key, const char *val) __attribute__ ((alias ("nvram_invmatch_jffs")));
++int acosNvramConfig_save_jffs(void) __attribute__ ((alias ("nvram_commit_jffs")));
++int acosNvramConfig_save_config_jffs(void) __attribute__ ((alias ("nvram_commit_jffs")));
++int acosNvramConfig_loadFactoryDefault_jffs(const char* key);
+ 
+ /* ZyXel / Edimax */
+ // many functions expect the opposite return values: (0) success, failure (1/-1)
+ 
+-int nvram_getall_adv(int unk, char *buf, size_t len) {
+-    return nvram_getall(buf, len) == E_SUCCESS ? E_FAILURE : E_SUCCESS;
++int nvram_getall_adv_jffs(int unk, char *buf, size_t len) {
++    return nvram_getall_jffs(buf, len) == E_SUCCESS ? E_FAILURE : E_SUCCESS;
+ }
+ 
+-char *nvram_get_adv(int unk, const char *key) {
+-    return nvram_get(key);
++char *nvram_get_adv_jffs(int unk, const char *key) {
++    return nvram_get_jffs(key);
+ }
+ 
+-int nvram_set_adv(int unk, const char *key, const char *val) {
+-    return nvram_set(key, val);
++int nvram_set_adv_jffs(int unk, const char *key, const char *val) {
++    return nvram_set_jffs(key, val);
+ }
+ 
+-int nvram_commit_adv(int) __attribute__ ((alias ("nvram_commit")));
+-int nvram_unlock_adv(int) __attribute__ ((alias ("true")));
+-int nvram_lock_adv(int) __attribute__ ((alias ("true")));
+-int nvram_check(void) __attribute__ ((alias ("true")));
++int nvram_commit_adv_jffs(int) __attribute__ ((alias ("nvram_commit_jffs")));
++int nvram_unlock_adv_jffs(int) __attribute__ ((alias ("true")));
++int nvram_lock_adv_jffs(int) __attribute__ ((alias ("true")));
++int nvram_check_jffs(void) __attribute__ ((alias ("true")));
+ 
+-int nvram_state(int unk1, void *unk2, void *unk3) {
++int nvram_state_jffs(int unk1, void *unk2, void *unk3) {
+     return E_FAILURE;
+ }
+ 
+-int envram_commit(void) {
+-    return !nvram_commit();
++int envram_commit_jffs(void) {
++    return !nvram_commit_jffs();
+ }
+ 
+-int envram_default(void) {
+-    return !nvram_set_default();
++int envram_default_jffs(void) {
++    return !nvram_set_default_jffs();
+ }
+ 
+-int envram_load(void)  {
+-    return !nvram_init();
++int envram_load_jffs(void)  {
++    return !nvram_init_jffs();
+ }
+ 
+-int envram_safe_load(void)  {
+-    return !nvram_init();
++int envram_safe_load_jffs(void)  {
++    return !nvram_init_jffs();
+ }
+ 
+-int envram_match(const char *key, const char *val)  {
+-    return !nvram_match(key, val);
++int envram_match_jffs(const char *key, const char *val)  {
++    return !nvram_match_jffs(key, val);
+ }
+ 
+-int envram_get(const char* key, char *buf) {
++int envram_get_jffs(const char* key, char *buf) {
+     // may be incorrect
+     return !nvram_get_buf(key, buf, USER_BUFFER_SIZE);
+ }
+-int envram_get_func(const char* key, char *buf) __attribute__ ((alias ("envram_get")));
+-int envram_getf(const char* key, const char *fmt, ...) {
++int envram_get_func_jffs(const char* key, char *buf) __attribute__ ((alias ("envram_get_jffs")));
++int envram_getf_jffs(const char* key, const char *fmt, ...) {
+     va_list va;
+-    char *val = nvram_get(key);
++    char *val = nvram_get_jffs(key);
+ 
+     if (!val) {
+         return !E_SUCCESS;
+@@ -248,37 +248,37 @@
+     free(val);
+     return !E_FAILURE;
+ }
+-int nvram_getf(const char* key, const char *fmt, ...) __attribute__ ((alias ("envram_getf")));
++int nvram_getf_jffs(const char* key, const char *fmt, ...) __attribute__ ((alias ("envram_getf_jffs")));
+ 
+-int envram_set(const char *key, const char *val) {
+-    return !nvram_set(key, val);
++int envram_set_jffs(const char *key, const char *val) {
++    return !nvram_set_jffs(key, val);
+ }
+-int envram_set_func(const char *key, const char *val) __attribute__ ((alias ("envram_set")));
++int envram_set_func_jffs(const char *key, const char *val) __attribute__ ((alias ("envram_set_jffs")));
+ 
+-int envram_setf(const char* key, const char* fmt, ...) {
++int envram_setf_jffs(const char* key, const char* fmt, ...) {
+     va_list va;
+ 
+     va_start(va, fmt);
+     vsnprintf(temp, BUFFER_SIZE, fmt, va);
+     va_end(va);
+ 
+-    return !nvram_set(key, temp);
++    return !nvram_set_jffs(key, temp);
+ }
+-int nvram_setf(const char* key, const char* fmt, ...) __attribute__ ((alias ("envram_setf")));
++int nvram_setf_jffs(const char* key, const char* fmt, ...) __attribute__ ((alias ("envram_setf_jffs")));
+ 
+-int envram_unset(const char *key) {
+-    return !nvram_unset(key);
++int envram_unset_jffs(const char *key) {
++    return !nvram_unset_jffs(key);
+ }
+-int envram_unset_func(void) __attribute__ ((alias ("envram_unset")));
++int envram_unset_func_jffs(void) __attribute__ ((alias ("envram_unset_jffs")));
+ 
+ /* Ralink */
+ 
+-char *nvram_bufget(int idx, const char *key) {
+-    return nvram_safe_get(key);
++char *nvram_bufget_jffs(int idx, const char *key) {
++    return nvram_safe_get_jffs(key);
+ }
+ 
+-int nvram_bufset(int idx, const char *key, const char *val) {
+-    return nvram_set(key, val);
++int nvram_bufset_jffs(int idx, const char *key, const char *val) {
++    return nvram_set_jffs(key, val);
+ }
+ 
+ #endif
+diff -Naur libnvram2jffs.orig/config.h libnvram2jffs/config.h
+--- libnvram2jffs.orig/config.h	2023-09-07 13:35:46.608307694 -0600
++++ libnvram2jffs/config.h	2023-09-07 13:35:02.648278773 -0600
+@@ -2,11 +2,11 @@
+ #define INCLUDE_CONFIG_H
+ 
+ // Determines whether debugging information should be printed to stderr.
+-#define DEBUG               1
++#define DEBUG               0
+ // Determines the size of the internal buffer, used for manipulating and storing key values, etc.
+-#define BUFFER_SIZE         256
++#define BUFFER_SIZE         2048
+ // Determines the size of the "emulated" NVRAM, used by nvram_get_nvramspace().
+-#define NVRAM_SIZE          2048
++#define NVRAM_SIZE          1048576
+ // Determines the maximum size of the user-supplied output buffer when a length is not supplied.
+ #define USER_BUFFER_SIZE    64
+ // Determines the unique separator character (as string) used for the list implementation. Do not use "\0".
+@@ -18,9 +18,9 @@
+ // Timeout for the semaphore
+ #define IPC_TIMEOUT         1000
+ // Mount point of the base NVRAM implementation.
+-#define MOUNT_POINT         "/firmadyne/libnvram/"
++#define MOUNT_POINT         "/jffs/.nvram/"
+ // Location of NVRAM override values that are copied into the base NVRAM implementation.
+-#define OVERRIDE_POINT      "/firmadyne/libnvram.override/"
++#define OVERRIDE_POINT      "/jffs/.nvram.override/"
+ 
+ // Define the semantics for success and failure error codes.
+ #define E_FAILURE  0
+@@ -44,32 +44,32 @@
+ // Default values for NVRAM.
+ #define NVRAM_DEFAULTS \
+     /* Linux kernel log level, used by "WRT54G3G_2.11.05_ETSI_code.bin" (305) */ \
+-    ENTRY("console_loglevel", nvram_set, "7") \
++    ENTRY("console_loglevel", nvram_set_jffs, "7") \
+     /* Reset NVRAM to default at bootup, used by "WNR3500v2-V1.0.2.10_23.0.70NA.chk" (1018) */ \
+-    ENTRY("restore_defaults", nvram_set, "1") \
+-    ENTRY("sku_name", nvram_set, "") \
+-    ENTRY("wla_wlanstate", nvram_set, "") \
+-    ENTRY("lan_if", nvram_set, "br0") \
+-    ENTRY("lan_ipaddr", nvram_set, "192.168.0.50") \
+-    ENTRY("lan_bipaddr", nvram_set, "192.168.0.255") \
+-    ENTRY("lan_netmask", nvram_set, "255.255.255.0") \
++    ENTRY("restore_defaults", nvram_set_jffs, "1") \
++    ENTRY("sku_name", nvram_set_jffs, "") \
++    ENTRY("wla_wlanstate", nvram_set_jffs, "") \
++    ENTRY("lan_if", nvram_set_jffs, "br0") \
++    ENTRY("lan_ipaddr", nvram_set_jffs, "192.168.0.50") \
++    ENTRY("lan_bipaddr", nvram_set_jffs, "192.168.0.255") \
++    ENTRY("lan_netmask", nvram_set_jffs, "255.255.255.0") \
+     /* Set default timezone, required by multiple images */ \
+-    ENTRY("time_zone", nvram_set, "EST5EDT") \
++    ENTRY("time_zone", nvram_set_jffs, "EST5EDT") \
+     /* Set default WAN MAC address, used by "NBG-416N_V1.00(USA.7)C0.zip" (12786) */ \
+-    ENTRY("wan_hwaddr_def", nvram_set, "01:23:45:67:89:ab") \
++    ENTRY("wan_hwaddr_def", nvram_set_jffs, "01:23:45:67:89:ab") \
+     /* Attempt to define LAN/WAN interfaces */ \
+-    ENTRY("wan_ifname", nvram_set, "eth0") \
+-    ENTRY("lan_ifnames", nvram_set, "eth1 eth2 eth3 eth4") \
++    ENTRY("wan_ifname", nvram_set_jffs, "eth0") \
++    ENTRY("lan_ifnames", nvram_set_jffs, "eth1 eth2 eth3 eth4") \
+     /* Used by "TEW-638v2%201.1.5.zip" (12898) to prevent crash in 'goahead' */ \
+-    ENTRY("ethConver", nvram_set, "1") \
++    ENTRY("ethConver", nvram_set_jffs, "1") \
+     /* Used by "Firmware_TEW-411BRPplus_2.07_EU.zip" (13649) to prevent crash in 'init' */ \
+-    ENTRY("lan_proto", nvram_set, "dhcp") \
+-    ENTRY("wan_ipaddr", nvram_set, "0.0.0.0") \
+-    ENTRY("wan_netmask", nvram_set, "255.255.255.0") \
+-    ENTRY("wanif", nvram_set, "eth0") \
++    ENTRY("lan_proto", nvram_set_jffs, "dhcp") \
++    ENTRY("wan_ipaddr", nvram_set_jffs, "0.0.0.0") \
++    ENTRY("wan_netmask", nvram_set_jffs, "255.255.255.0") \
++    ENTRY("wanif", nvram_set_jffs, "eth0") \
+     /* Used by "DGND3700 Firmware Version 1.0.0.17(NA).zip" (3425) to prevent crashes */ \
+-    ENTRY("time_zone_x", nvram_set, "0") \
+-    ENTRY("rip_multicast", nvram_set, "0") \
+-    ENTRY("bs_trustedip_enable", nvram_set, "0")
++    ENTRY("time_zone_x", nvram_set_jffs, "0") \
++    ENTRY("rip_multicast", nvram_set_jffs, "0") \
++    ENTRY("bs_trustedip_enable", nvram_set_jffs, "0")
+ 
+ #endif
+diff -Naur libnvram2jffs.orig/Makefile libnvram2jffs/Makefile
+--- libnvram2jffs.orig/Makefile	2023-09-07 13:35:46.608307694 -0600
++++ libnvram2jffs/Makefile	2023-09-07 13:35:24.176293428 -0600
+@@ -1,19 +1,18 @@
+ CFLAGS=-O2 -fPIC -Wall
+-LDFLAGS=-shared -nostdlib
+ 
+ OBJECTS=$(SOURCES:.c=.o)
+ SOURCES=nvram.c
+-TARGET=libnvram.so
++TARGET=libnvram2jffs.a
+ 
+ all: $(SOURCES) $(TARGET)
+ 
+ $(TARGET): $(OBJECTS)
+-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
++	$(AR) -rv $@ $(OBJECTS)
+ 
+ .c.o:
+ 	$(CC) -c $(CFLAGS) $< -o $@
+ 
+ clean:
+-	rm -f *.o libnvram.so test
++	rm -f *.o libnvram2jffs.a test
+ 
+ .PHONY: clean
+diff -Naur libnvram2jffs.orig/nvram.c libnvram2jffs/nvram.c
+--- libnvram2jffs.orig/nvram.c	2023-09-07 13:35:46.608307694 -0600
++++ libnvram2jffs/nvram.c	2023-09-07 13:35:02.648278773 -0600
+@@ -1,3 +1,4 @@
++#define _GNU_SOURCE
+ #include <dirent.h>
+ #include <errno.h>
+ #include <limits.h>
+@@ -124,8 +125,8 @@
+             endmntent(mnt);
+         }
+ 
+-        PRINT_MSG("%s\n", "Triggering NVRAM initialization!");
+-        nvram_init();
++//        PRINT_MSG("%s\n", "Triggering NVRAM initialization!");
++//        nvram_init_jffs();
+     }
+ 
+ cont:
+@@ -166,7 +167,7 @@
+     return;
+ }
+ 
+-int nvram_init(void) {
++int nvram_init_jffs(void) {
+     FILE *f;
+ 
+     PRINT_MSG("%s\n", "Initializing NVRAM...");
+@@ -179,11 +180,11 @@
+ 
+     sem_lock();
+ 
+-    if (mount("tmpfs", MOUNT_POINT, "tmpfs", MS_NOEXEC | MS_NOSUID | MS_SYNCHRONOUS, "") == -1) {
+-        sem_unlock();
+-        PRINT_MSG("Unable to mount tmpfs on mount point %s!\n", MOUNT_POINT);
+-        return E_FAILURE;
+-    }
++//    if (mount("tmpfs", MOUNT_POINT, "tmpfs", MS_NOEXEC | MS_NOSUID | MS_SYNCHRONOUS, "") == -1) {
++//        sem_unlock();
++//        PRINT_MSG("Unable to mount tmpfs on mount point %s!\n", MOUNT_POINT);
++//        return E_FAILURE;
++//    }
+ 
+     // Checked by certain Ralink routers
+     if ((f = fopen("/var/run/nvramd.pid", "w+")) == NULL) {
+@@ -195,21 +196,23 @@
+ 
+     sem_unlock();
+ 
+-    return nvram_set_default();
++//    return nvram_set_default();
++      return 0;
+ }
+ 
+-int nvram_reset(void) {
++int nvram_reset_jffs(void) {
+     PRINT_MSG("%s\n", "Reseting NVRAM...");
+ 
+-    if (nvram_clear() != E_SUCCESS) {
++    if (nvram_clear_jffs() != E_SUCCESS) {
+         PRINT_MSG("%s\n", "Unable to clear NVRAM!");
+         return E_FAILURE;
+     }
+ 
+-    return nvram_set_default();
++//    return nvram_set_default();
++      return 0;
+ }
+ 
+-int nvram_clear(void) {
++int nvram_clear_jffs(void) {
+     char path[PATH_MAX] = MOUNT_POINT;
+     struct dirent *entry;
+     int ret = E_SUCCESS;
+@@ -247,18 +250,18 @@
+     return ret;
+ }
+ 
+-int nvram_close(void) {
++int nvram_close_jffs(void) {
+     PRINT_MSG("%s\n", "Closing NVRAM...");
+     return E_SUCCESS;
+ }
+ 
+-int nvram_list_add(const char *key, const char *val) {
++int nvram_list_add_jffs(const char *key, const char *val) {
+     char *pos;
+ 
+     PRINT_MSG("%s = %s + %s\n", val, temp, key);
+ 
+     if (nvram_get_buf(key, temp, BUFFER_SIZE) != E_SUCCESS) {
+-        return nvram_set(key, val);
++        return nvram_set_jffs(key, val);
+     }
+ 
+     if (!key || !val) {
+@@ -270,7 +273,7 @@
+     }
+ 
+     // This will overwrite the temp buffer, but it is OK
+-    if (nvram_list_exist(key, val, LIST_MAGIC) != NULL) {
++    if (nvram_list_exist_jffs(key, val, LIST_MAGIC) != NULL) {
+         return E_SUCCESS;
+     }
+ 
+@@ -284,10 +287,10 @@
+         return E_FAILURE;
+     }
+ 
+-    return nvram_set(key, temp);
++    return nvram_set_jffs(key, temp);
+ }
+ 
+-char *nvram_list_exist(const char *key, const char *val, int magic) {
++char *nvram_list_exist_jffs(const char *key, const char *val, int magic) {
+     char *pos = NULL;
+ 
+     if (nvram_get_buf(key, temp, BUFFER_SIZE) != E_SUCCESS) {
+@@ -309,7 +312,7 @@
+     return (magic == LIST_MAGIC) ? NULL : (char *) E_FAILURE;
+ }
+ 
+-int nvram_list_del(const char *key, const char *val) {
++int nvram_list_del_jffs(const char *key, const char *val) {
+     char *pos;
+ 
+     if (nvram_get_buf(key, temp, BUFFER_SIZE) != E_SUCCESS) {
+@@ -323,16 +326,16 @@
+     }
+ 
+     // This will overwrite the temp buffer, but it is OK.
+-    if ((pos = nvram_list_exist(key, val, LIST_MAGIC))) {
++    if ((pos = nvram_list_exist_jffs(key, val, LIST_MAGIC))) {
+         while (*pos && *pos != LIST_SEP[0]) {
+             *pos++ = LIST_SEP[0];
+         }
+     }
+ 
+-    return nvram_set(key, temp);
++    return nvram_set_jffs(key, temp);
+ }
+ 
+-char *nvram_get(const char *key) {
++char *nvram_get_jffs(const char *key) {
+ // Some routers pass the key as the second argument, instead of the first.
+ // We attempt to fix this directly in assembly for MIPS if the key is NULL.
+ #if defined(mips)
+@@ -344,13 +347,13 @@
+     return (nvram_get_buf(key, temp, BUFFER_SIZE) == E_SUCCESS) ? strndup(temp, BUFFER_SIZE) : NULL;
+ }
+ 
+-char *nvram_safe_get(const char *key) {
+-    char* ret = nvram_get(key);
++char *nvram_safe_get_jffs(const char *key) {
++    char* ret = nvram_get_jffs(key);
+     return ret ? ret : strdup("");
+ }
+ 
+-char *nvram_default_get(const char *key, const char *val) {
+-    char *ret = nvram_get(key);
++char *nvram_default_get_jffs(const char *key, const char *val) {
++    char *ret = nvram_get_jffs(key);
+ 
+     PRINT_MSG("%s = %s || %s\n", key, ret, val);
+ 
+@@ -358,8 +361,8 @@
+         return ret;
+     }
+ 
+-    if (val && nvram_set(key, val)) {
+-        return nvram_get(key);
++    if (val && nvram_set_jffs(key, val)) {
++        return nvram_get_jffs(key);
+     }
+ 
+     return NULL;
+@@ -404,7 +407,7 @@
+     return E_SUCCESS;
+ }
+ 
+-int nvram_get_int(const char *key) {
++int nvram_get_int_jffs(const char *key) {
+     char path[PATH_MAX] = MOUNT_POINT;
+     FILE *f;
+     int ret;
+@@ -440,7 +443,7 @@
+     return ret;
+ }
+ 
+-int nvram_getall(char *buf, size_t len) {
++int nvram_getall_jffs(char *buf, size_t len) {
+     char path[PATH_MAX] = MOUNT_POINT;
+     struct dirent *entry;
+     size_t pos = 0, ret;
+@@ -505,7 +508,7 @@
+     return E_SUCCESS;
+ }
+ 
+-int nvram_set(const char *key, const char *val) {
++int nvram_set_jffs(const char *key, const char *val) {
+     char path[PATH_MAX] = MOUNT_POINT;
+     FILE *f;
+ 
+@@ -538,7 +541,7 @@
+     return E_SUCCESS;
+ }
+ 
+-int nvram_set_int(const char *key, const int val) {
++int nvram_set_int_jffs(const char *key, const int val) {
+     char path[PATH_MAX] = MOUNT_POINT;
+     FILE *f;
+ 
+@@ -571,8 +574,8 @@
+     return E_SUCCESS;
+ }
+ 
+-int nvram_set_default(void) {
+-    int ret = nvram_set_default_builtin();
++int nvram_set_default_jffs(void) {
++    int ret = nvram_set_default_builtin_jffs();
+     PRINT_MSG("Loading built-in default values = %d!\n", ret);
+ 
+ #define NATIVE(a, b) \
+@@ -583,12 +586,12 @@
+ #define TABLE(a) \
+     PRINT_MSG("Checking for symbol \"%s\"...\n", #a); \
+     if (a) { \
+-        PRINT_MSG("Loading from native built-in table: %s (%p) = %d!\n", #a, a, nvram_set_default_table(a)); \
++        PRINT_MSG("Loading from native built-in table: %s (%p) = %d!\n", #a, a, nvram_set_default_table_jffs(a)); \
+     }
+ 
+ #define PATH(a) \
+     if (!access(a, R_OK)) { \
+-        PRINT_MSG("Loading from default configuration file: %s = %d!\n", a, foreach_nvram_from(a, (void (*)(const char *, const char *, void *)) nvram_set, NULL)); \
++        PRINT_MSG("Loading from default configuration file: %s = %d!\n", a, foreach_nvram_from(a, (void (*)(const char *, const char *, void *)) nvram_set_jffs, NULL)); \
+     }
+ 
+     NVRAM_DEFAULTS_PATH
+@@ -596,10 +599,10 @@
+ #undef NATIVE
+ #undef TABLE
+ 
+-    return nvram_set_default_image();
++    return nvram_set_default_image_jffs();
+ }
+ 
+-static int nvram_set_default_builtin(void) {
++static int nvram_set_default_builtin_jffs(void) {
+     int ret = E_SUCCESS;
+ 
+     PRINT_MSG("%s\n", "Setting built-in default values!");
+@@ -616,7 +619,7 @@
+     return ret;
+ }
+ 
+-static int nvram_set_default_image(void) {
++static int nvram_set_default_image_jffs(void) {
+     PRINT_MSG("%s\n", "Copying overrides from defaults folder!");
+     sem_lock();
+     system("/bin/cp "OVERRIDE_POINT"* "MOUNT_POINT);
+@@ -624,18 +627,18 @@
+     return E_SUCCESS;
+ }
+ 
+-static int nvram_set_default_table(const char *tbl[]) {
++static int nvram_set_default_table_jffs(const char *tbl[]) {
+     size_t i = 0;
+ 
+     while (tbl[i]) {
+-        nvram_set(tbl[i], tbl[i + 1]);
++        nvram_set_jffs(tbl[i], tbl[i + 1]);
+         i += (tbl[i + 2] != 0 && tbl[i + 2] != (char *) 1) ? 2 : 3;
+     }
+ 
+     return E_SUCCESS;
+ }
+ 
+-int nvram_unset(const char *key) {
++int nvram_unset_jffs(const char *key) {
+     char path[PATH_MAX] = MOUNT_POINT;
+ 
+     if (!key) {
+@@ -657,7 +660,7 @@
+     return E_SUCCESS;
+ }
+ 
+-int nvram_match(const char *key, const char *val) {
++int nvram_match_jffs(const char *key, const char *val) {
+     if (!key) {
+         PRINT_MSG("%s\n", "NULL key!");
+         return E_FAILURE;
+@@ -678,17 +681,17 @@
+     return E_SUCCESS;
+ }
+ 
+-int nvram_invmatch(const char *key, const char *val) {
++int nvram_invmatch_jffs(const char *key, const char *val) {
+     if (!key) {
+         PRINT_MSG("%s\n", "NULL key!");
+         return E_FAILURE;
+     }
+ 
+     PRINT_MSG("%s ~?= \"%s\"\n", key, val);
+-    return !nvram_match(key, val);
++    return !nvram_match_jffs(key, val);
+ }
+ 
+-int nvram_commit(void) {
++int nvram_commit_jffs(void) {
+     sem_lock();
+     sync();
+     sem_unlock();
+diff -Naur libnvram2jffs.orig/nvram.h libnvram2jffs/nvram.h
+--- libnvram2jffs.orig/nvram.h	2023-09-07 13:35:46.608307694 -0600
++++ libnvram2jffs/nvram.h	2023-09-07 13:35:02.648278773 -0600
+@@ -9,66 +9,66 @@
+ static void sem_unlock();
+ 
+ // Sets default NVRAM values using the built-in NVRAM_DEFAULTS table.
+-static int nvram_set_default_builtin(void);
++static int nvram_set_default_builtin_jffs(void);
+ // Sets default NVRAM values using the override values from OVERRIDE_POINT. Will hold lock.
+-static int nvram_set_default_image(void);
++static int nvram_set_default_image_jffs(void);
+ // Sets default NVRAM values from external table defined in NVRAM_DEFAULTS_PATH.
+-static int nvram_set_default_table(const char *tbl[]);
++static int nvram_set_default_table_jffs(const char *tbl[]);
+ 
+ /* The following functions form the standard NVRAM API. Functions that return integers
+  * will generally return E_SUCCESS/E_FAILURE, with the exception of nvram_get_int(). */
+ 
+ // Initializes NVRAM with default values. Will hold lock.
+-int nvram_init(void);
++int nvram_init_jffs(void);
+ // Restores original NVRAM default values.
+-int nvram_reset(void);
++int nvram_reset_jffs(void);
+ // Clears NVRAM values. Will hold lock.
+-int nvram_clear(void);
++int nvram_clear_jffs(void);
+ // Pretends to close NVRAM, does nothing.
+-int nvram_close(void);
++int nvram_close_jffs(void);
+ // Pretends to commit NVRAM, actually synchronizes file system.
+-int nvram_commit(void);
++int nvram_commit_jffs(void);
+ 
+ // Given a key, gets the corresponding NVRAM value. If key is non-existent, returns NULL.
+ // Will dynamically allocate memory, so the user should call free().
+ // On MIPS, will use $a1 as key if $a0 is NULL.
+-char *nvram_get(const char *key);
++char *nvram_get_jffs(const char *key);
+ // Given a key, gets the corresponding NVRAM value. If key is non-existent, returns "".
+ // Will dynamically allocate memory.
+-char *nvram_safe_get(const char *key);
++char *nvram_safe_get_jffs(const char *key);
+ // Given a key, gets the corresponding NVRAM value. If key is non-existent, returns val.
+ // Otherwise, returns NULL. Will dynamically allocate memory.
+-char *nvram_default_get(const char *key, const char *val);
++char *nvram_default_get_jffs(const char *key, const char *val);
+ // Given a key, gets the corresponding NVRAM value into a user-supplied buffer.
+ // Will hold lock.
+ int nvram_get_buf(const char *key, char *buf, size_t sz);
+ // Given a key, gets the corresponding NVRAM value as integer. If key is non-existent, returns E_FAILURE.
+ // Will hold lock.
+-int nvram_get_int(const char *key);
++int nvram_get_int_jffs(const char *key);
+ // Gets all NVRAM keys and values into a user-supplied buffer, of the format "key=value...".
+ // Will hold lock.
+-int nvram_getall(char *buf, size_t len);
++int nvram_getall_jffs(char *buf, size_t len);
+ 
+ // Given a key and value, sets the corresponding NVRAM value. Will hold lock.
+-int nvram_set(const char *key, const char *val);
++int nvram_set_jffs(const char *key, const char *val);
+ // Given a key and value as integer, sets the corresponding NVRAM value. Will hold lock.
+-int nvram_set_int(const char *key, const int val);
++int nvram_set_int_jffs(const char *key, const int val);
+ // Given a key, unsets the corresponding NVRAM value. Will hold lock.
+-int nvram_unset(const char *key);
++int nvram_unset_jffs(const char *key);
+ // Reloads default NVRAM values.
+-int nvram_set_default(void);
++int nvram_set_default_jffs(void);
+ 
+ // Adds a list entry to a NVRAM value.
+-int nvram_list_add(const char *key, const char *val);
++int nvram_list_add_jffs(const char *key, const char *val);
+ // Checks whether a list entry exists in a NVRAM value. If the magic argument
+ // is equal to LIST_MAGIC, will either return a pointer to the match or NULL.
+-char *nvram_list_exist(const char *key, const char *val, int magic);
++char *nvram_list_exist_jffs(const char *key, const char *val, int magic);
+ // Deletes a list entry from a NVRAM value.
+-int nvram_list_del(const char *key, const char *val);
++int nvram_list_del_jffs(const char *key, const char *val);
+ 
+ // Given a key, checks whether the corresponding NVRAM value matches val.
+-int nvram_match(const char *key, const char *val);
++int nvram_match_jffs(const char *key, const char *val);
+ // Given a key, checks whether the corresponding NVRAM value does not match val.
+-int nvram_invmatch(const char *key, const char *val);
++int nvram_invmatch_jffs(const char *key, const char *val);
+ 
+ #endif
